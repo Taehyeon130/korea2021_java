@@ -20,8 +20,8 @@ class Bus{
 	}
 
 	public static void main(String[] args){
-		Bus b = new Bus();
+		Bus b = new Bus(); //만들어질때부터
 		
-		b.init();
+		b.init(); //만들어진 것을 고치기 / 리모델링
 	}
 }
