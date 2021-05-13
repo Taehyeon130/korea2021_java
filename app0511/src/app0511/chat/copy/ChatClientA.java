@@ -21,7 +21,9 @@ public class ChatClientA extends JFrame implements ActionListener, KeyListener{
 	JScrollPane scroll;
 	JTextField t_input;
 	JButton bt;
-	ChatClientB cb;
+	ChatClientB chatClientB;
+	ChatClientC chatClientC;
+	
 	
 	public ChatClientA() {
 		//생성
@@ -77,7 +79,17 @@ public class ChatClientA extends JFrame implements ActionListener, KeyListener{
 		
 		if(e.getSource()==bt_open) {  //열기버튼 누르면
 			System.out.println("열기");
-			cb = new ChatClientB(this);
+			chatClientB = new ChatClientB();
+			chatClientC = new ChatClientC();
+			
+			//B창을 위한 설정(A,C의 정보를 넘겨야 함)
+			chatClientB.setChatClientA(this);
+			chatClientB.setChatClientC(chatClientC);
+			
+			//C창을 위한 설정(A,B의 정보를 넘겨야 함)
+			chatClientC.setChatClientA(this);
+			chatClientC.setChatClientB(chatClientB);
+			
 			//cb.setArea2(area);
 		}else if(e.getSource()==bt) {  //전송버튼 누르면
 //			System.out.println("전송");
@@ -93,7 +105,8 @@ public class ChatClientA extends JFrame implements ActionListener, KeyListener{
 		t_input.setText("");		     //(3) 입력값 초기화
 		
 		//친구인 상대방 채팅창의 area의 append()
-		cb.area.append(msg+"\n");
+		chatClientB.area.append(msg+"\n");
+		chatClientC.area.append(msg+"\n");
 	}
 	
 	public static void main(String[] args) {

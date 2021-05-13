@@ -1,20 +1,24 @@
 package app0511.member;
 
+import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 import java.awt.Choice;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class JoinForm extends JFrame{
+public class JoinForm extends JFrame implements ActionListener{
 	JPanel p_title;
 	JLabel la_title;
 	JLabel la_id;
@@ -60,6 +64,15 @@ public class JoinForm extends JFrame{
 		ch_server.add("daum.net");
 		ch_server.add("direct insert");
 		
+		//메일 수신여부 관련
+		p_recive = new JPanel();
+		la_recive = new JLabel("메일 수신");
+		g = new CheckboxGroup(); //체크 박스를 그룹으로 묶기 위한 객체
+		
+		bt_regist = new JButton("가입");
+		
+		
+		
 		//스타일, 레이아웃
 		setLayout(new FlowLayout());
 		la_title.setFont(new Font("돋움",Font.BOLD,24));
@@ -77,6 +90,9 @@ public class JoinForm extends JFrame{
 		t_mailId.setPreferredSize(new Dimension(120,30));
 		la_at.setPreferredSize(new Dimension(30,30));
 		ch_server.setPreferredSize(new Dimension(150,30));
+		
+		la_recive.setPreferredSize(new Dimension(new Dimension(190,30)));
+		p_recive.setPreferredSize(new Dimension(270,30));
 		
 		//조립
 		p_title.add(la_title); //패널에 제목 올리기
@@ -97,7 +113,15 @@ public class JoinForm extends JFrame{
 		p_mail.add(ch_server);
 		add(p_mail);
 		
+		//메일 수신 조립
+		p_recive.add(new Checkbox("Yes",g,true));
+		p_recive.add(new Checkbox("No",g,false));
+		add(la_recive);
+		add(p_recive);
+		add(bt_regist);
 		
+		//이벤트 소스와 리스너 연결
+		bt_regist.addActionListener(this);
 		
 		//보여주기 (화면 중앙으로 오게
 		this.setSize(500, 500);
@@ -106,10 +130,44 @@ public class JoinForm extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	
-	public static void main(String[] args) {
-		new JoinForm();
+	public void checkValue() {
+		//아이디에 대한 유효성 체크
+		//String str = t_pass.getText();
+		//System.out.println(str); //잘 나오지만 사용하지 않아야함
+		
+		//해결책?
+		//char[] pass = t_pass.getPassword(); //char배열로 데이터 받은 후, 우리가 원하는 형태인 String으로 다시 변환..
+		//char 배열을 String으로 변환해서 쓰자!!
+		String data = new String(t_pass.getPassword());
+		//System.out.println(data);
+		//System.out.println(t_id.getText().length());
 
+		//5개의 체크박스를 대상으로 조사를 실시!!
+		int count=0;
+		for(int i=0;i<ch_hobby.length;i++) {
+			if(ch_hobby[0].isSelected()) {
+				count++;
+			}			
+		}
+		if(t_id.getText().length()==0) {
+			JOptionPane.showMessageDialog(this,"아이디 입력하세요");
+			t_id.requestFocus();//커서 올려놓기
+		}else if(data.length()<8) {
+			JOptionPane.showMessageDialog(this,"비밀번호 8자 이상 입력하세요");
+			t_pass.requestFocus();//커서 올려놓기
+		}else if(count<1){
+			JOptionPane.showMessageDialog(this,"하나 이상의 취미 선택");
+		}else {
+			//오라클 DB입력 
+		}
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		checkValue();
 	}
 
+	public static void main(String[] args) {
+		new JoinForm();
+		
+	}
 }
