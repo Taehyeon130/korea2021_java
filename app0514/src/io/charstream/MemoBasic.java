@@ -23,8 +23,6 @@ public class MemoBasic extends JFrame{
 		add(bt,BorderLayout.NORTH);
 		add(scroll);
 		
-		//리
-		
 		setBounds(500,100,500,600);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
