@@ -13,7 +13,7 @@ public class ImageCollector {
 	URL url; //Uniformed Resource Location : 자원의 위치
 	URLConnection con; //웹서버에 요청을 시도할 수 있는 객체
 	HttpURLConnection http; //URLConnection의 자식 객체 즉 Http 프로토콜에 최적화된 자식
-	String path ="https://dispatch.cdnser.be/cms-content/uploads/2019/06/07/2349597a-3dad-461a-9db8-4d8410cc7d2a.jpg";
+	String path ="https://menu.mt.co.kr/ize/thumb/2019/07/06/2019070207257274149_1.jpg";
 	FileOutputStream fos; //파일을 대상으로 한 바이트 기반의 출력스트림
 	
 	public ImageCollector() {
@@ -28,7 +28,7 @@ public class ImageCollector {
 			
 			//웹서버에 요청을 시도해보자
 			is = http.getInputStream(); //웹서버와의 요청시 생성된 입력스트림
-			fos = new FileOutputStream("C:\\korea202102_javaworkspace\\app0517\\src\\res\\target.jpg"); //복사될 파일 즉 생성될 파일의 경로
+			fos = new FileOutputStream("C:\\korea202102_javaworkspace\\app0517\\res\\target3.jpg"); //복사될 파일 즉 생성될 파일의 경로
 			
 			long starttime = System.currentTimeMillis(); //현재 시간을 밀리 second로 반환
 			// 이 입력 스트림으로 서버의 자원을 가져올 수 있다..
