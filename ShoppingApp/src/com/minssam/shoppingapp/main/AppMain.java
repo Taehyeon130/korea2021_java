@@ -13,10 +13,12 @@ import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.minssam.shoppingapp.config.ConfigMain;
 import com.minssam.shoppingapp.customer.CustomerMain;
+import com.minssam.shoppingapp.member.JoinForm;
 import com.minssam.shoppingapp.member.LoginForm;
 import com.minssam.shoppingapp.member.MemberMain;
 import com.minssam.shoppingapp.order.OrderMain;
@@ -30,7 +32,7 @@ public class AppMain extends JFrame implements ActionListener{
 	JPanel p_center;//페이지를 교체하기 위한 패널(페이지들 간의 공존을 위해)
 	
 	//페이지 선언 
-	Page[] pages = new Page[6];
+	Page[] pages = new Page[7];
 	
 	//데이터베스 관련 
 	String driver="com.mysql.jdbc.Driver"; // 8.xx 인 경우 com.mysql.jdbc.cj.Driver
@@ -38,6 +40,7 @@ public class AppMain extends JFrame implements ActionListener{
 	String user="root";
 	String password="1234";
 	private Connection con;
+	private boolean session = false; //세션이 true일 때 인증받은 것이고, false일 때는 미인증으로 
 	
 	public AppMain() {
 		connect();//DB접속
@@ -58,6 +61,7 @@ public class AppMain extends JFrame implements ActionListener{
 		pages[3] = new CustomerMain(this);//고객센터
 		pages[4] = new LoginForm(this);//로그인
 		pages[5] = new ConfigMain(this);//환경설정
+		pages[6] = new JoinForm(this);//환경설정
 		
 		//스타일
 		
@@ -87,6 +91,12 @@ public class AppMain extends JFrame implements ActionListener{
 		}
 		
 		//보여주기
+		//인증 여부에 따라 알맞는 페이지 보여주기
+		if(session == false) { //인증을 받지 않은 상태이므로 로그인을 디폴트로 보여주자!!
+			showHide(4); //제일먼저 보여주고 싶은 페이지 			
+		}else {
+			showHide(0);
+		}
 		setBounds(100, 100, 1200, 700);
 		setVisible(true);
 	}
@@ -99,15 +109,12 @@ public class AppMain extends JFrame implements ActionListener{
 		CustomButton bt=(CustomButton)obj; //down casting
 		//System.out.println(bt.getText());
 		
-		//내가 누른 버튼에 해당하는 페이지만 setVisible() 을 true로 놓고 나머지는 false로 놓자!!
-		for(int i=0;i<pages.length;i++) {
-			if(bt.getId()==i) {
-				pages[i].setVisible(true); //현재 선택한 버튼과 같은 인덱스를 갖는 페이지라면..
-			}else {
-				pages[i].setVisible(false);
-			}
-		}
 		
+		if(session) {
+			showHide(bt.getId());			
+		}else {
+			JOptionPane.showMessageDialog(this, "로그인이 필요합니다");
+		}
 	}
 	
 	public void connect() {
@@ -173,6 +180,28 @@ public class AppMain extends JFrame implements ActionListener{
 		return con;
 	}
 	
+	public void showHide(int n) { //보여주고 싶은 페이지의 번호를 넘기면 된다
+		//내가 누른 버튼에 해당하는 페이지만 setVisible() 을 true로 놓고 나머지는 false로 놓자!!
+		for(int i=0;i<pages.length;i++) {
+			if(n==i) {
+				pages[i].setVisible(true); //현재 선택한 버튼과 같은 인덱스를 갖는 페이지라면..
+			}else {
+				pages[i].setVisible(false);
+			}
+		}
+	}
+
+	
+	
+	
+	public boolean isSession() {
+		return session;
+	}
+
+	public void setSession(boolean session) {
+		this.session = session;
+	}
+
 	public static void main(String[] args) {
 		new AppMain();
 
