@@ -1,10 +1,10 @@
-package app0527.network.multi.gui;
+package app0528.network.multi.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class ChatClient extends JFrame implements ActionListener{
+public class ChatClient extends JFrame{
 	JPanel p_north;
 	JTextField t_ip;
 	JTextField t_port;
@@ -27,15 +27,12 @@ public class ChatClient extends JFrame implements ActionListener{
 	JTextField t_input;
 	JButton bt_send;
 	
-	Socket socket; //서버와의 통신을 위한 대화용 소켓
+	Socket socket;
+	ClientMsgThread msgThread;
 	
-	BufferedReader buffr = null; //서버로부터 전송되어온 메시지를 입력받을 수 있는 용도의 스트림
-	BufferedWriter buffw = null; //서버에 메시지를 전송할 수 있는 출력스트림
-	ClientMsgThread msgThread = null;
-	
-	public CharClient() {
+	public ChatClient() {
 		p_north = new JPanel();
-		t_ip = new JTextField("192.168.219.103",10);
+		t_ip = new JTextField("192.168.219.104",10);
 		t_port = new JTextField(5);
 		bt_connect = new JButton("접속");
 		area = new JTextArea();
@@ -55,9 +52,29 @@ public class ChatClient extends JFrame implements ActionListener{
 		add(p_south,BorderLayout.SOUTH);
 		
 		//이벤트
-		bt_connect.addActionListener(this);
-		bt_send.addActionListener(this);
+		bt_connect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				connect();
+			}
+		});
+		bt_send.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String msg = t_input.getText();
+				msgThread.send(msg);
+				t_input.setText(""); //입력값 초기화
+			}
+		});
 		
+		//엔터쳤을 때도 메시지 보내기
+		t_input.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					String msg = t_input.getText();
+					msgThread.send(msg);
+					t_input.setText(""); //입력값 초기화					
+				}
+			}
+		});
 		
 		//보여주기
 		setVisible(true);
@@ -68,12 +85,12 @@ public class ChatClient extends JFrame implements ActionListener{
 	public void connect() {
 		String ip = t_ip.getText();
 		int port = Integer.parseInt(t_port.getText());
-		
 		try {
-			socket = new Socket(ip, port); //서버에 접속 시도!!
-			//클라이언트 측의 대화담당 쓰레드 생성
-			msgThread = new ClientMsgThread(socket, area);
-			msgThread.start();
+			socket = new Socket(ip,port); //접속시도~~
+			
+			//클라이언트 전용 대화 쓰레드 생성
+			msgThread = new ClientMsgThread(this);
+			msgThread.start(); //run() 메서드 수행 --> listen() 청취 무한루프 시작!!
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -81,20 +98,7 @@ public class ChatClient extends JFrame implements ActionListener{
 		}
 	}
 	
-
-
-	
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == bt_connect) {
-			connect();
-		}else if(e.getSource() == bt_send) {
-			msgThread.send(t_input.getText());
-		}
-		
-	}
-
 	public static void main(String[] args) {
-		new CharClient();
+		new ChatClient();
 	}
-
 }
