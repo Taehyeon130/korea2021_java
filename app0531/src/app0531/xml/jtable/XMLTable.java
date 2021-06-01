@@ -39,12 +39,15 @@ public class XMLTable extends JFrame{
 			URL url = this.getClass().getClassLoader().getResource("Pets.xml");
 			URI uri = url.toURI();
 			SAXParser saxParser = factory.newSAXParser(); //파서 생성
-			saxParser.parse(new File(uri), new PetHandler());
+			//System.out.println("파싱을 시작합니다");
+			PetHandler handler = null;
+			saxParser.parse(new File(uri), handler = new PetHandler()); //동기방식
+			//System.out.println("파싱을 종료합니다");
 			
 			//JTable의 모델의 데이터와 파싱한 결과와의 매칭은 파싱전? 파싱한 후? >> 파싱 후
 			PetModel model = new PetModel();
-			model.data = 파싱한 결과의 vector;
-			table.setModel(model);
+			model.data = handler.petList;
+			table.setModel(model); //바로 이순간부터 JTable은 TableModel의 메서드들을 호출하게 된다 why?)그래야 표를 구성함
 			
 		} catch (URISyntaxException e) {
 			e.printStackTrace();

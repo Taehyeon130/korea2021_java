@@ -1,6 +1,7 @@
 package app0531.xml.jtable;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -8,7 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 //Pet.xml을 파싱할 핸들러
 public class PetHandler extends DefaultHandler{
-	ArrayList<Pet> petList; //동기화 처리가 되어 있지 않아서 무겁지않음 >> 빠름
+	Vector<Pet> petList; //동기화 처리가 되어 있지 않아서 무겁지않음 >> 빠름
 	
 	boolean isPets;
 	boolean isPet;
@@ -22,7 +23,7 @@ public class PetHandler extends DefaultHandler{
 	public void startElement(String uri, String localName, String tag, Attributes attributes) throws SAXException {
 		if(tag.equals("pets")) {
 			isPets = true;
-			petList = new ArrayList<Pet>(); //컬렉션 생성
+			petList = new Vector<Pet>(); //컬렉션 생성
 		}else if(tag.equals("pet")) {
 			isPet = true;
 			pet = new Pet(); //VO생성
